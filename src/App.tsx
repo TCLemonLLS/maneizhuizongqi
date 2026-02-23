@@ -15,7 +15,9 @@ import {
   TrendingUp,
   TrendingDown,
   Sparkles,
-  Loader2
+  Loader2,
+  Download,
+  Smartphone
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -52,6 +54,7 @@ export default function App() {
   // AI Advice state
   const [aiAdvice, setAiAdvice] = useState<string | null>(null);
   const [isGeneratingAdvice, setIsGeneratingAdvice] = useState(false);
+  const [showInstallGuide, setShowInstallGuide] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -204,7 +207,14 @@ ${recentT}
             </div>
             <h1 className="font-bold text-xl tracking-tight">马内追踪器</h1>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setShowInstallGuide(true)}
+              className="p-2 text-zinc-400 hover:text-zinc-600 transition-colors"
+              title="手机安装指南"
+            >
+              <Smartphone size={20} />
+            </button>
             <button 
               onClick={generateAIAdvice}
               disabled={isGeneratingAdvice}
@@ -218,7 +228,7 @@ ${recentT}
               className="bg-zinc-900 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 hover:bg-zinc-800 transition-colors"
             >
               <Plus size={18} />
-              记一笔
+              <span className="hidden sm:inline">记一笔</span>
             </button>
           </div>
         </div>
@@ -256,7 +266,7 @@ ${recentT}
         </AnimatePresence>
 
         {/* Balance Card */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -268,35 +278,37 @@ ${recentT}
             </div>
           </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white p-6 rounded-3xl shadow-sm border border-zinc-100 flex items-center gap-4"
-          >
-            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">
-              <TrendingUp size={24} />
-            </div>
-            <div>
-              <span className="text-zinc-500 text-sm font-medium">总收入</span>
-              <p className="text-xl font-bold text-emerald-600">+¥{stats.total_income?.toLocaleString() || 0}</p>
-            </div>
-          </motion.div>
+          <div className="grid grid-cols-2 sm:contents gap-4">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-white p-4 sm:p-6 rounded-3xl shadow-sm border border-zinc-100 flex flex-col sm:flex-row items-center gap-2 sm:gap-4"
+            >
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">
+                <TrendingUp size={20} className="sm:w-6 sm:h-6" />
+              </div>
+              <div className="text-center sm:text-left">
+                <span className="text-zinc-500 text-[10px] sm:text-sm font-medium">总收入</span>
+                <p className="text-sm sm:text-xl font-bold text-emerald-600">+¥{stats.total_income?.toLocaleString() || 0}</p>
+              </div>
+            </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white p-6 rounded-3xl shadow-sm border border-zinc-100 flex items-center gap-4"
-          >
-            <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-600">
-              <TrendingDown size={24} />
-            </div>
-            <div>
-              <span className="text-zinc-500 text-sm font-medium">总支出</span>
-              <p className="text-xl font-bold text-rose-600">-¥{stats.total_expense?.toLocaleString() || 0}</p>
-            </div>
-          </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-white p-4 sm:p-6 rounded-3xl shadow-sm border border-zinc-100 flex flex-col sm:flex-row items-center gap-2 sm:gap-4"
+            >
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-600">
+                <TrendingDown size={20} className="sm:w-6 sm:h-6" />
+              </div>
+              <div className="text-center sm:text-left">
+                <span className="text-zinc-500 text-[10px] sm:text-sm font-medium">总支出</span>
+                <p className="text-sm sm:text-xl font-bold text-rose-600">-¥{stats.total_expense?.toLocaleString() || 0}</p>
+              </div>
+            </motion.div>
+          </div>
         </section>
 
         {/* Charts & Insights */}
@@ -570,6 +582,61 @@ ${recentT}
                     </button>
                   </div>
                 </form>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Install Guide Modal */}
+      <AnimatePresence>
+        {showInstallGuide && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowInstallGuide(false)}
+              className="absolute inset-0 bg-zinc-900/60 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="relative w-full max-w-sm bg-white rounded-[2.5rem] shadow-2xl overflow-hidden p-8"
+            >
+              <div className="text-center space-y-6">
+                <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto">
+                  <Smartphone size={32} />
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-xl font-bold">手机端安装指南</h2>
+                  <p className="text-sm text-zinc-500 leading-relaxed">
+                    本程序是渐进式 Web 应用 (PWA)，无需下载 APK 即可获得原生应用体验。
+                  </p>
+                </div>
+                
+                <div className="text-left space-y-4 bg-zinc-50 p-4 rounded-2xl">
+                  <div className="flex gap-3">
+                    <div className="w-6 h-6 bg-zinc-200 rounded-full flex items-center justify-center text-xs font-bold shrink-0">1</div>
+                    <p className="text-xs text-zinc-600">在手机浏览器（推荐 Chrome 或 Safari）中打开此页面。</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="w-6 h-6 bg-zinc-200 rounded-full flex items-center justify-center text-xs font-bold shrink-0">2</div>
+                    <p className="text-xs text-zinc-600">点击浏览器菜单中的 <span className="font-bold text-zinc-900">“添加到主屏幕”</span> 或 <span className="font-bold text-zinc-900">“安装应用”</span>。</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="w-6 h-6 bg-zinc-200 rounded-full flex items-center justify-center text-xs font-bold shrink-0">3</div>
+                    <p className="text-xs text-zinc-600">现在你可以像使用普通 App 一样从桌面启动它了！</p>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => setShowInstallGuide(false)}
+                  className="w-full py-4 bg-zinc-900 text-white rounded-2xl font-bold hover:bg-zinc-800 transition-colors"
+                >
+                  我知道了
+                </button>
               </div>
             </motion.div>
           </div>
